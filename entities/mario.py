@@ -17,34 +17,56 @@ class Mario(pygame.sprite.Sprite):
         self.gravity = 0.8
         self.jump_speed = -16
 
+        # player status
+        self.status = "idle"
+        self.facing_right = True
+
     def import_sprites(self):
         sprite_path = './data/sprites/mario/'
-        self.animations = {'idle': [], 'run': [], 'jump': []}
+        self.animations = {'idle': [], 'run': [], 'jump': [], 'fall': []}
 
         for animation in self.animations.keys():
             full_path = sprite_path + animation
             self.animations[animation] = import_folder(full_path)
 
     def animate(self):
-        animation = self.animations['idle']
+        animation = self.animations[self.status]
 
         self.frame_index += self.animation_speed
         if self.frame_index >= len(animation):
             self.frame_index = 0
         
-        self.image = animation[int(self.frame_index)]
+        image = animation[int(self.frame_index)]
+        if self.facing_right:
+            self.image = image
+        else:
+            flipped_img = pygame.transform.flip(image, True, False)
+            self.image = flipped_img
 
     def get_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
             self.direction.x = 1
+            self.facing_right = True
         elif keys[pygame.K_LEFT]:
             self.direction.x = -1
+            self.facing_right = False
         else:
             self.direction.x = 0
 
         if keys[pygame.K_UP]:
             self.jump()
+
+    def get_state(self):
+        if self.direction.y < 0:
+            self.status = "jump"
+        elif self.direction.y > 1:
+            self.status = "fall"
+        else:
+            if self.direction.x != 0:
+                self.status = "run"
+            else:
+                self.status = "idle"
 
     def apply_gravity(self):
         self.direction.y += self.gravity
@@ -55,4 +77,5 @@ class Mario(pygame.sprite.Sprite):
 
     def update(self):
         self.get_input()
+        self.get_state()
         self.animate()

@@ -48,8 +48,10 @@ class Level:
             if sprite.rect.colliderect(mario.rect):
                 if mario.direction.x < 0:
                     mario.rect.left = sprite.rect.right
+                    mario.on_left = True
                 elif mario.direction.x > 0:
                     mario.rect.right = sprite.rect.left
+                    mario.on_right = True
 
     def vertical_movement_col(self):
         mario = self.mario.sprite

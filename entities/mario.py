@@ -20,6 +20,10 @@ class Mario(pygame.sprite.Sprite):
         # player status
         self.status = "idle"
         self.facing_right = True
+        self.on_ground = False
+        self.on_ceiling = False
+        self.on_left = False
+        self.on_right = False
 
     def import_sprites(self):
         sprite_path = './data/sprites/mario/'
@@ -43,6 +47,14 @@ class Mario(pygame.sprite.Sprite):
             flipped_img = pygame.transform.flip(image, True, False)
             self.image = flipped_img
 
+        # rect
+        if self.on_ground:
+            self.rect = self.image.get_rect(midbottom = self.rect.midbottom)
+        elif self.on_ceiling:
+            self.rect = self.image.get_rect(midtop = self.rect.midtop)
+        else:
+            self.rect = self.image.get_rect(center = self.rect.center)
+
     def get_input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
@@ -54,7 +66,7 @@ class Mario(pygame.sprite.Sprite):
         else:
             self.direction.x = 0
 
-        if keys[pygame.K_UP]:
+        if keys[pygame.K_UP] and self.on_ground:
             self.jump()
 
     def get_state(self):

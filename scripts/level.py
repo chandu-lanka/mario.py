@@ -60,9 +60,16 @@ class Level:
                 if mario.direction.y > 0:
                     mario.rect.bottom = sprite.rect.top
                     mario.direction.y = 0
+                    mario.on_ground = True
                 elif mario.direction.y < 0:
                     mario.rect.top = sprite.rect.bottom
                     mario.direction.y = 0
+                    mario.on_ceiling = True
+
+        if mario.on_ground and mario.direction.y < 0 or mario.direction.y > 1:
+            mario.on_ground = False
+        if mario.on_ceiling and mario.direction.y > 0:
+            mario.on_ceiling = False
 
     def run(self):
         #tiles
